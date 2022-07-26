@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <canvas id="ball" width="600px" height="600px" style="border: 1px solid #000000"></canvas> </br>
+    <button onclick="play()">Play</button>
+    <p style="position: absolute; left: 50px; top: 605px;" id="score"></p>
+<script>
+class GameBoard {
+    constructor(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+}
+
+class Ball {
+    constructor(x, y, dx, dy, speed, radius) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
+        this.radius = radius;
+        this.speed = speed;
+    }
+    moveball() {
+        ball.x -= ball.dx;
+        ball.y -= ball.dy;
+        drawball();
+    }
+    changball() {
+        if (ball.x == gameBoard.width - ball.radius || ball.x < 0 + ball.radius) {
+            ball.dx = -ball.dx;
+        } else if (ball.y < 0 + ball.radius) {
+            ball.dy = - ball.dy;
+        }
+    }
+}
+
+class Bar {
+    constructor(x, y, width, height, speed) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.speed = speed;
+    }
+    movebar() {
+        document.addEventListener('keydown', function (i) {
+            if (i.keyCode == 36) {
+                if (bar.x > 0) {
+                    bar.x -= bar.speed;
+                }
+
+            } else if (i.keyCode == 38) {
+                if (bar.x < gameBoard.width - bar.width) {
+                    bar.x += bar.speed;
+                }
+            }
+        })
+
+    }
+}
+
+function drawball() {
+    context.beginPath();
+    context.arc(ball.x, ball.y, ball.radius, 0, 2 * Math.PI);
+    context.fillStyle = "blue";
+    context.fill();
+    context.closePath();
+}
+
+function drawbar() {
+    context.beginPath();
+    context.rect(bar.x, bar.y, bar.width, bar.height);
+    context.fillStyle = "blue";
+    context.fill();
+    context.closePath();
+}
+function checkover() {
+    if (ball.y == gameBoard.height - ball.radius) {
+        GameOver = true;
+    }
+}
+function ballimpactbar() {
+    if (ball.x + ball.radius >=bar.x && ball.x - ball.radius <= bar.x + bar.width && ball.y + ball.radius >= bar.y) {
+        ball.dy = -ball.dy;
+
+    }
+    
+}
+function getscore() {
+    sum ++;
+    if (sum == 100) {
+        score += (sum * ball.speed / 1000);
+        document.getElementById("score").innerHTML = "Score: " + score;
+        sum = 0;
+    }
+}
+
+
+function play() {
+    if (!GameOver) {
+        context.clearRect(0, 0, gameBoard.width, gameBoard.height);
+        drawbar();
+        ball.moveball();
+        ball.changball();
+        ballimpactbar();
+        checkover();
+        getscore();
+        requestAnimationFrame(play);
+    } else{
+        alert("Bạn đã thua");
+        alert("Score:" + score);
+    }
+}
+
+let canvas = document.getElementById("ball");
+let context = canvas.getContext("2d");
+let gameBoard = new GameBoard(500, 600);
+let bar = new Bar(200, 500, 70, 10, 30);
+let ball = new Ball(bar.x + (bar.width / 2) ,bar.y - 10, 5, 2, 50, 10);
+let GameOver = false;
+let score = 0;
+let sum = 0;
+canvas.width = gameBoard.width;
+canvas.height = gameBoard.height;
+drawball();
+drawbar();
+bar.movebar();
+</script>
+</body>
+</html>
